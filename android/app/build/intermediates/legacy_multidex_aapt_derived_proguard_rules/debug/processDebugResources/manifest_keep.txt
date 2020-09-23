@@ -1,0 +1,4 @@
+# Referenced at /home/sd-pc/Documents/FirebaseApp/FirebaseApp/android/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml:25
+-keep class androidx.core.app.CoreComponentFactory { <init>(); }
+# Referenced at /home/sd-pc/Documents/FirebaseApp/FirebaseApp/android/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml:25
+-keep class com.firebaseapp.MainApplication { <init>(); }
