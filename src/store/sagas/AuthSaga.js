@@ -18,7 +18,6 @@ const uploadImage = async (uid, action) => {
         profileImageReference
           .getDownloadURL()
           .then(function(url) {
-            // console.log('URL *****', url)
             resolve(url);
           })
           .catch(function(error) {
@@ -46,8 +45,6 @@ export function* signUpWithEmailPassword(action) {
           yield firestore()
             .collection('Users')
             .doc(res.user._user.uid)
-            // .collection('Details')
-            // .collection(res.user._user.uid)
             .set({
               username: action.payload.username,
               email: action.payload.email,
@@ -115,22 +112,3 @@ export function* logout(action) {
     }
   }
 }
-
-// export function* checkUser(action) {
-//   try {
-//     let res = yield auth().onAuthStateChanged();
-//     console.log('RESPONSE', res);
-//     if (res) {
-//       yield put({type: AuthActions.CHECK_USER_SUCCESS});
-//       NavigationService.reset_0('HomeScreen');
-//     } else {
-//       NavigationService.reset_0('LoginScreen');
-//     }
-//   } catch (e) {
-//     console.log(e);
-//     if (e) {
-//       showToast(e);
-//       yield put({type: AuthActions.CHECK_USER_FAIL});
-//     }
-//   }
-// }

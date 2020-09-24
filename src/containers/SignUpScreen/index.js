@@ -68,8 +68,6 @@ export const SignUpScreen = props => {
     <ScrollView>
       <View
         style={{
-          // height: Metrix.VerticalSize(),
-          // width: Metrix.HorizontalSize(),
           alignItems: 'center',
         }}>
         <Text

@@ -19,19 +19,14 @@ function Reducer(state = INITIAL_STATE, action) {
     case HomeActions.GET_ALL_USERS:
       return {...state, isLoading: true};
     case HomeActions.GET_ALL_USERS_SUCCESS:
-      console.log('SUCCESS RUN', action);
-      console.log('ALL USER DETAILS: ', typeof action.payload);
       let arr = [];
-
       action.payload.forEach(element => {
         if (element.email != auth().currentUser._user.email) {
           arr.push(element);
         }
       });
-      console.log('ARRRRRRAYYYYYY: ', arr);
       return {...state, isLoading: false, allUserDetails: arr};
     case HomeActions.GET_ALL_USERS_FAIL:
-      console.log('FAIL RUN');
       return {...state, isLoading: false};
     default:
       return state;
