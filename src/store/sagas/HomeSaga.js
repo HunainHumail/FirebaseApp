@@ -39,6 +39,7 @@ const getAllUserDetails = async () => {
 export function* getUserDetails(action) {
   try {
     let res = yield getDetails();
+
     if (res._data) {
       yield put({
         type: HomeActions.GET_USER_DETAILS_SUCCESS,
@@ -60,6 +61,7 @@ export function* getUserDetails(action) {
 export function* getAllUsers(action) {
   try {
     let res = yield getAllUserDetails();
+
     console.log('RESPONSE', res);
     if (res) {
       yield put({
