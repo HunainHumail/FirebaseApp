@@ -20,7 +20,7 @@ export const HomeScreen = props => {
   const isLodingUserData = useSelector(state => state.Home.isLoading);
   const currentUserData = useSelector(state => state.Home.userDetails);
   const allUserData = useSelector(state => state.Home.allUserDetails);
-  console.log('CURRENT USER DETAILS: ', currentUserData);
+  console.log('ALL USER DATA: ', allUserData);
 
   useEffect(() => {
     console.log('CHECKING EXISTING USER: ', auth().currentUser);
@@ -90,6 +90,7 @@ export const HomeScreen = props => {
                       NavigationService.navigate('ChatScreen', {
                         username: item.username,
                         profileImage: item.profileImage,
+                        channelId: item.channelID,
                       });
                     }}
                     style={{

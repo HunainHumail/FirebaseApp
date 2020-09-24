@@ -10,7 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import {Metrix, Colors, Images, Fonts, NavigationService} from '../../config';
-import {AuthActions, HomeActions} from '../../store/actions';
+import {AuthActions, HomeActions, ChatActions} from '../../store/actions';
 import {useSelector, useDispatch} from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import {Header} from '../../components';
@@ -26,6 +26,8 @@ export const ChatScreen = props => {
 
   const chatterName = props.route.params.username;
   const chatterDP = props.route.params.profileImage;
+  const channelID = props.route.params.channelId;
+  console.log('CHANNEL ID', channelID);
 
   useEffect(() => {
     console.log('CHECKING EXISTING USER: ', auth().currentUser);
@@ -34,7 +36,7 @@ export const ChatScreen = props => {
     setMessages([
       {
         _id: 1,
-        text: 'Hello developer',
+        text: 'Hey Hunain',
         createdAt: new Date(),
         user: {
           _id: 2,
@@ -45,9 +47,20 @@ export const ChatScreen = props => {
     ]);
   }, []);
 
+  const handleSend = messages => {
+    const writes = messages.map(m => m);
+    console.log(writes);
+  };
+
   const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
+    setMessages(
+      previousMessages => GiftedChat.append(previousMessages, messages),
+      console.log('PREVIOUS MESSAGES', ...messages),
+    );
+    console.log('setMessages: ', messages);
+    console.log('ONSEND: ', messages);
+    dispatch(
+      ChatActions.sendMessage({channelID: channelID, messages: messages}),
     );
   }, []);
 
@@ -98,6 +111,9 @@ export const ChatScreen = props => {
         messages={messages}
         renderUsernameOnMessage={true}
         onSend={messages => onSend(messages)}
+        // onSend={messages => {
+        //   handleSend(messages);
+        // }}
         user={{
           _id: 1,
         }}

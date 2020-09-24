@@ -1,7 +1,7 @@
 import {put, call, select, all} from 'redux-saga/effects';
 import {HomeActions} from '../actions';
 import {showToast} from '../../config/utills';
-import auth from '@react-native-firebase/auth';
+import auth, {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 const getDetails = async () => {
@@ -11,7 +11,6 @@ const getDetails = async () => {
     .get();
   return userData;
 };
-
 const getAllUserDetails = async () => {
   const data = [];
   await new Promise(res => {
@@ -21,10 +20,32 @@ const getAllUserDetails = async () => {
         querySnapshot => {
           querySnapshot.forEach(doc => {
             const {username, email, profileImage} = doc.data();
+            let channelID;
+            let currentUserID = firebase.auth().currentUser.uid;
+            let otherUserID = doc.id;
+            firestore()
+              .collection('Messages')
+              .get()
+              .then(documents => {
+                documents.forEach(document => {
+                  let id = document.id;
+                  let splittedId = id.split('_');
+                  if (splittedId.indexOf(currentUserID) != -1) {
+                    channelID = id;
+                  } else {
+                    channelID = currentUserID + '_' + otherUserID;
+                  }
+                });
+              });
+            if (!channelID) {
+              channelID = currentUserID + '_' + otherUserID;
+            }
             data.push({
               username,
               email,
               profileImage,
+              id: doc.id,
+              channelID,
             });
           });
 
