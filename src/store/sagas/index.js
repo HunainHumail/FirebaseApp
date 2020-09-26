@@ -7,7 +7,7 @@ import {AuthActions, HomeActions, ChatActions} from '../actions/';
 // Imports: Redux Sagas
 import {signUpWithEmailPassword, login, logout} from './AuthSaga';
 import {getUserDetails, getAllUsers} from './HomeSaga';
-import {sendMessage} from './ChatSaga';
+import {sendMessage, recieveMessage} from './ChatSaga';
 
 // Redux Saga: Root Saga
 export function* rootSaga() {
@@ -18,6 +18,7 @@ export function* rootSaga() {
     takeEvery(HomeActions.GET_USER_DETAILS, getUserDetails),
     takeEvery(HomeActions.GET_ALL_USERS, getAllUsers),
     takeEvery(ChatActions.SEND_MESSAGE, sendMessage),
+    takeEvery(ChatActions.RECIEVE_MESSAGES, recieveMessage),
 
     // takeEvery(AuthActions.CHECK_USER, checkUser),
 

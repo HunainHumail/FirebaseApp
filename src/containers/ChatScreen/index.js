@@ -15,6 +15,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import {Header} from '../../components';
 import {GiftedChat} from 'react-native-gifted-chat';
+import firestore from '@react-native-firebase/firestore';
 
 export const ChatScreen = props => {
   const dispatch = useDispatch();
@@ -22,29 +23,82 @@ export const ChatScreen = props => {
   const isLodingUserData = useSelector(state => state.Home.isLoading);
   const currentUserData = useSelector(state => state.Home.userDetails);
   const allUserData = useSelector(state => state.Home.allUserDetails);
+  // const msgs = useSelector(state => state.Chat.messages);
+  // console.log('MESSAGES: ', msgs);
+
   const [messages, setMessages] = useState([]);
 
   const chatterName = props.route.params.username;
   const chatterDP = props.route.params.profileImage;
   const channelID = props.route.params.channelId;
-  console.log('CHANNEL ID', channelID);
+  // console.log('CHANNEL ID', channelID);
+
+  const parse = message => {
+    console.log('MESSAGE IN PARSE FUNCTION', message);
+    // const {createdAt, text, user} = message.data();
+    // const {id: _id} = message;
+
+    return message;
+  };
+
+  const on = callback => {
+    firestore()
+      .collection('Messages')
+      .doc(channelID)
+      .collection('Messages')
+      .orderBy('createdAt', 'asc')
+      .onSnapshot(snapshot => {
+        let data = [];
+        console.log('SNAPPPPSHOTTTTT:', snapshot.docs);
+        snapshot.docs.map(item => {
+          data.push(item._data);
+        });
+        console.log('DATA IN ON: ', data);
+        callback(parse(data));
+        // snapshot.docChanges().forEach(change => {
+        //   console.log('CHANGEEEEEEE:', change);
+        //   if (change.type === 'added') {
+        //     console.log('CHANGE DATA', change.doc._data);
+        //     callback(parse(change.doc._data));
+        //   }
+        // });
+      });
+  };
+
+  // const send = messages => {
+  //   for (let i = 0; i < messages.length; i++) {
+  //     const {text, user} = messages[i];
+  //     const message = {text, user, createdAt: new Date()};
+  //     this.append(message);
+  //   }
+  // };
+
+  // const append = message => Fire.ref.add(message);
 
   useEffect(() => {
-    console.log('CHECKING EXISTING USER: ', auth().currentUser);
+    console.log('USE EFFECT!!: ', auth().currentUser);
     dispatch(HomeActions.getUserDetail());
     dispatch(HomeActions.getAllUsers());
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hey Hunain',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: props.route.params.username,
-          avatar: props.route.params.profileImage,
-        },
-      },
-    ]);
+    on(message => {
+      console.log('MESSAGE IN USEEFFECT: ', message);
+      setMessages(previousState =>
+        GiftedChat.append(previousState.messages, message),
+      );
+    });
+    // dispatch(ChatActions.recieveMessages(channelID));
+    // setMessages(msgs);
+    // setMessages([
+    //   {
+    //     _id: 1,
+    //     text: 'Hey Hunain',
+    //     createdAt: new Date(),
+    //     user: {
+    //       _id: 2,
+    //       name: props.route.params.username,
+    //       avatar: props.route.params.profileImage,
+    //     },
+    //   },
+    // ]);
   }, []);
 
   const handleSend = messages => {
@@ -53,12 +107,13 @@ export const ChatScreen = props => {
   };
 
   const onSend = useCallback((messages = []) => {
-    setMessages(
-      previousMessages => GiftedChat.append(previousMessages, messages),
-      console.log('PREVIOUS MESSAGES', ...messages),
-    );
+    // console.log('ONSEND: ', messages);
+
+    // setMessages(
+    //   previousMessages => GiftedChat.append(previousMessages, messages),
+    //   console.log('PREVIOUS MESSAGES', ...messages),
+    // );
     console.log('setMessages: ', messages);
-    console.log('ONSEND: ', messages);
     dispatch(
       ChatActions.sendMessage({channelID: channelID, messages: messages}),
     );
@@ -115,7 +170,7 @@ export const ChatScreen = props => {
         //   handleSend(messages);
         // }}
         user={{
-          _id: 1,
+          _id: auth().currentUser.uid,
         }}
       />
     </View>
