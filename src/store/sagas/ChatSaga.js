@@ -22,10 +22,18 @@ const sendingMessage = (channelId, messages) => {
       firestore()
         .collection('Messages')
         .doc(channelId)
-        .collection('Messages')
-        .add(messageData)
-        .then(r => {
-          console.log('CHANNEL CREATED', r);
+        .set({
+          key: channelId,
+        })
+        .then(() => {
+          firestore()
+            .collection('Messages')
+            .doc(channelId)
+            .collection('Messages')
+            .add(messageData)
+            .then(r => {
+              console.log('CHANNEL CREATED', r);
+            });
         });
     } catch (e) {
       console.log(e);
